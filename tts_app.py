@@ -4,30 +4,28 @@ import streamlit as st
 from google.cloud import texttospeech
 
 # Function to load and validate credentials
+import os
+import json
+
 def load_credentials():
-    try:
-        credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-        if not credentials_path:
-            raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.")
+    # Get the JSON credentials from the environment variable
+    credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
-        if not os.path.exists(credentials_path):
-            raise FileNotFoundError(f"Credentials file not found at: {credentials_path}")
+    if not credentials_json:
+        raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable not found.")
 
-        # Check if the file is readable
-        with open(credentials_path, "r") as file:
-            content = file.read().strip()
-            if not content:
-                raise ValueError("Credentials file is empty!")
-            credentials = json.loads(content)
-
-        # Write credentials to a temporary file
+    # Check if it's a file path or JSON content
+    if credentials_json.startswith("{"):
+        # Treat it as JSON content
+        credentials = json.loads(credentials_json)
+        # Write to a temporary file
         with open("service_account_temp.json", "w") as temp_file:
             json.dump(credentials, temp_file)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account_temp.json"
-
-    except (FileNotFoundError, ValueError, json.JSONDecodeError, PermissionError) as e:
-        st.error(f"Failed to load credentials: {e}")
-        st.stop()
+    else:
+        # Treat it as a file path
+        if not os.path.exists(credentials_json):
+            raise FileNotFoundError(f"Credentials file not found at: {credentials_json}")        
 
 # Initialize Google Cloud Text-to-Speech client
 def initialize_client():
