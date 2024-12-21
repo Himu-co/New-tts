@@ -12,8 +12,9 @@ def load_credentials():
     try:
         # Parse JSON credentials
         credentials = json.loads(credentials_json)
+        print("Loaded credentials:", credentials)  # Debugging line to print loaded credentials
     except json.JSONDecodeError as e:
-        st.error("Failed to parse JSON credentials: " + str(e))
+        print("Failed to parse JSON credentials: ", str(e))  # Debugging line for errors
         raise e
 
     # Write to temporary file for Google SDK
@@ -22,7 +23,8 @@ def load_credentials():
         json.dump(credentials, temp_file)
 
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-    st.write(f"Credentials loaded to: {credentials_path}")
+    print(f"Credentials successfully written to: {credentials_path}")  # Debugging line to confirm writing
+
 
 # Initialize the Google TTS client
 def initialize_client():
