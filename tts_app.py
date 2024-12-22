@@ -4,18 +4,12 @@ import streamlit as st
 from google.cloud import texttospeech
 
 def load_credentials():
-    """Load credentials from Streamlit secrets and set environment variable."""
-    try:
-        credentials_json = json.dumps(st.secrets["GOOGLE_APPLICATION_CREDENTIALS"])
-        temp_path = "/tmp/service_account_temp.json"
-        with open(temp_path, "w") as temp_file:
-            temp_file.write(credentials_json)
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = temp_path
-        print(f"Credentials loaded to: {temp_path}")
-    except Exception as e:
-        print(f"Error loading credentials: {e}")
-        raise ValueError("Failed to load credentials from Streamlit secrets.")
-
+   from dotenv import load_dotenv
+import os
+load_dotenv()  # Load environment variables from .env
+credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+with open("service_account_temp.json", "w") as f:
+    f.write(credentials_json)
 def initialize_client():
     """Initialize the Google Cloud Text-to-Speech client."""
     load_credentials()
