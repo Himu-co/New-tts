@@ -1,20 +1,23 @@
-from dotenv import load_dotenv
 import os
 import json
-import streamlit as st
 from google.cloud import texttospeech
-
-def load_credentials():
-   from dotenv import load_dotenv
-import os
+from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env
-credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
-with open("service_account_temp.json", "w") as f:
-    f.write(credentials_json)
 def initialize_client():
-    """Initialize the Google Cloud Text-to-Speech client."""
-    load_credentials()
+    credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    if not credentials_json:
+        raise ValueError("Environment variable GOOGLE_APPLICATION_CREDENTIALS_JSON is not set!")
+   
+    # Write the credentials to a temporary file
+    credentials_path = "/tmp/service_account_temp.json"
+    with open(credentials_path, "w") as f:
+        f.write(credentials_json)
+    
+    # Set the environment variable for the Google API client
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+    
     return texttospeech.TextToSpeechClient()
+
 
 def main():
     """Streamlit app main function."""
