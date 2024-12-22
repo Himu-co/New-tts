@@ -6,20 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env
 def initialize_client():
     credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
-    if not credentials_json:
-        raise ValueError("Environment variable GOOGLE_APPLICATION_CREDENTIALS_JSON is not set!")
-   
-    # Write the credentials to a temporary file
-    credentials_path = "/tmp/service_account_temp.json"
-    with open(credentials_path, "w") as f:
-        f.write(credentials_json)
-    
-    # Set the environment variable for the Google API client
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-    
+
     return texttospeech.TextToSpeechClient()
-
-
 def main():
     """Streamlit app main function."""
     st.title("Text-to-Speech Converter")
