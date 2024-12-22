@@ -1,5 +1,5 @@
 streamlit
 google-cloud-texttospeech
 google-auth
-p y t h o n - d o t e n v = = 1 . 0 . 1 
+python-dotenv
 
